@@ -91,6 +91,14 @@ class StreamPlatformView(viewsets.ViewSet):
         serializer = StreamPlatformSerializer(watchlist, context={'request': request})
         return Response(serializer.data)
 
+    def create(self, request):
+        serializer = StreamPlatformSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
