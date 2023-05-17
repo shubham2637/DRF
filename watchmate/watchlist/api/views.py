@@ -1,12 +1,16 @@
 from django.core.exceptions import ObjectDoesNotExist
+
 from rest_framework.decorators import api_view
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, mixins, generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
+
 from watchlist.models import WatchList, StreamPlatform, Review
 from watchlist.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
+from watchlist.api.permissions import AdminOrReadOnly
 
 
 #
@@ -101,11 +105,13 @@ from watchlist.api.serializers import WatchListSerializer, StreamPlatformSeriali
 class StreamPlatformView(viewsets.ModelViewSet):
     queryset = StreamPlatform.objects.all()
     serializer_class = StreamPlatformSerializer
+    permission_classes = [AdminOrReadOnly]
 
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
     queryset = Review.objects.all()
+    permission_classes = [AdminOrReadOnly]
 
     def perform_create(self, serializer):
         watchlist_id = self.kwargs.get('watchlist_id')
@@ -119,6 +125,7 @@ class ReviewCreate(generics.CreateAPIView):
 class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()  # now using get_queryset for custom queryset
     serializer_class = ReviewSerializer
+    permission_classes = [AdminOrReadOnly]
 
     def get_queryset(self):
         watchlist_id = self.kwargs['watchlist_id']
@@ -128,6 +135,7 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [AdminOrReadOnly]
 
 
 class WatchListAV( APIView ):
