@@ -103,11 +103,11 @@ class StreamPlatformListAV( APIView ):
 
     def get(self, request):
         stream_platforms = StreamPlatform.objects.all()
-        serializer = StreamPlatformSerializer( stream_platforms, many=True )
+        serializer = StreamPlatformSerializer( stream_platforms, many=True, context={'request': request})
         return Response( serializer.data, status=status.HTTP_200_OK )
 
     def post(self, request):
-        serializer = StreamPlatformSerializer(data=request.data)
+        serializer = StreamPlatformSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_201_CREATED )
@@ -119,7 +119,7 @@ class StreamPlatformDetailAV( APIView ):
     def get(self, request, pk):
         try:
             stream_platform = StreamPlatform.objects.get( pk=pk )
-            stream_platform_serializer = StreamPlatformSerializer( stream_platform )
+            stream_platform_serializer = StreamPlatformSerializer( stream_platform, context={'request': request})
             return Response( stream_platform_serializer.data, status=status.HTTP_200_OK )
         except ObjectDoesNotExist:
             return Response( {"error": "Stream Platform invalid id"}, status=status.HTTP_404_NOT_FOUND )
@@ -127,7 +127,8 @@ class StreamPlatformDetailAV( APIView ):
     def put(self, request, pk):
         try:
             stream_platform = StreamPlatform.objects.get( pk=pk )
-            stream_platform_serializer = StreamPlatformSerializer( stream_platform, data=request.data )
+            stream_platform_serializer = StreamPlatformSerializer( stream_platform, data=request.data,
+                                                                   context={'request' : request})
             if stream_platform_serializer.is_valid():
                 stream_platform_serializer.save()
                 return Response( stream_platform_serializer.data, status=status.HTTP_202_ACCEPTED )
