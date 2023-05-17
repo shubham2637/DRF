@@ -4,7 +4,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, mixins, generics, viewsets
 from rest_framework.views import APIView
-
+from rest_framework.exceptions import ValidationError
 from watchlist.models import WatchList, StreamPlatform, Review
 from watchlist.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 
@@ -105,10 +105,15 @@ class StreamPlatformView(viewsets.ModelViewSet):
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
+    queryset = Review.objects.all()
 
     def perform_create(self, serializer):
-        pk = self.kwargs.get('pk')
-        serializer.save(watchlist_id=pk)
+        watchlist_id = self.kwargs.get('watchlist_id')
+        review_user_id = self.request.user.pk
+        review_queryset = Review.objects.filter( watchlist_id=watchlist_id, review_user_id=review_user_id )
+        if review_queryset.exists():
+            raise ValidationError(f"{self.request.user.username} has already submitted a Review")
+        serializer.save(watchlist_id=watchlist_id, review_user_id=review_user_id)
 
 
 class ReviewList(generics.ListAPIView):
@@ -116,8 +121,8 @@ class ReviewList(generics.ListAPIView):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
-        pk = self.kwargs['pk']
-        return Review.objects.filter(watchlist=pk)
+        watchlist_id = self.kwargs['watchlist_id']
+        return Review.objects.filter(watchlist=watchlist_id)
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
