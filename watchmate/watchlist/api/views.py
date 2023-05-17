@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from watchlist.models import WatchList, StreamPlatform, Review
 from watchlist.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
-from watchlist.api.permissions import AdminOrReadOnly
+from watchlist.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
 
 
 #
@@ -125,7 +125,7 @@ class ReviewCreate(generics.CreateAPIView):
 class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()  # now using get_queryset for custom queryset
     serializer_class = ReviewSerializer
-    permission_classes = [AdminOrReadOnly]
+    permission_classes = [ReviewUserOrReadOnly]
 
     def get_queryset(self):
         watchlist_id = self.kwargs['watchlist_id']
