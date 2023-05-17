@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from watchlist.models import WatchList, StreamPlatform
+from watchlist.models import WatchList, StreamPlatform, Review
 
 
 # def description_length(value):  # custom validators
@@ -56,7 +56,16 @@ from watchlist.models import WatchList, StreamPlatform
 #             raise serializers.ValidationError("Name and Description should be different")
 #         return data
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Review
+        fields = "__all__"
+
+
 class WatchListSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = WatchList
