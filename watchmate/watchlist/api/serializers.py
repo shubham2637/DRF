@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from watchlist.models import Movie
+from watchlist.models import WatchList, StreamPlatform
 
 
 # def description_length(value):  # custom validators
@@ -34,26 +34,38 @@ from watchlist.models import Movie
 #         if data['name'] == data['description']:
 #             raise serializers.ValidationError("Name and Description should be different")
 #         return data
+# class MovieSerializer(serializers.ModelSerializer):
+#     length_name = serializers.SerializerMethodField()  # custom serializer fields
+#
+#     class Meta:
+#         model = WatchList
+#         fields = "__all__"  # all fields
+#         fields = ['id', 'name', 'description']
+#         exclude = ['active']
+#
+#     def get_length_name(self, instance):
+#         return len(instance.name)
+#
+#     def validate_name(self, value):  # field level validation
+#         if len(value) < 2:
+#             raise serializers.ValidationError("Name is too short!")
+#         return value
+#
+#     def validate(self, data):  # Object level validation
+#         if data['name'] == data['description']:
+#             raise serializers.ValidationError("Name and Description should be different")
+#         return data
 
-
-class MovieSerializer(serializers.ModelSerializer):
-    length_name = serializers.SerializerMethodField()  # custom serializer fields
+class WatchListSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Movie
+        model = WatchList
         fields = "__all__"  # all fields
-        # fields = ['id', 'name', 'description']
-        # exclude = ['active']
 
-    def get_length_name(self, instance):
-        return len(instance.name)
 
-    def validate_name(self, value):  # field level validation
-        if len(value) < 2:
-            raise serializers.ValidationError("Name is too short!")
-        return value
 
-    def validate(self, data):  # Object level validation
-        if data['name'] == data['description']:
-            raise serializers.ValidationError("Name and Description should be different")
-        return data
+class StreamPlatformSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StreamPlatform
+        fields = "__all__"  # all fields
