@@ -12,6 +12,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from watchlist.models import WatchList, StreamPlatform, Review
 from watchlist.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from watchlist.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
+from watchlist.api.throttling import ReviewListThrottle, ReviewCreateThrottle
 
 
 #
@@ -127,7 +128,7 @@ class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()  # now using get_queryset for custom queryset
     serializer_class = ReviewSerializer
     permission_classes = [ReviewUserOrReadOnly]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_classes = [ReviewListThrottle]
 
     def get_queryset(self):
         watchlist_id = self.kwargs['watchlist_id']
@@ -138,7 +139,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [ReviewUserOrReadOnly]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_classes = [ReviewCreateThrottle]
 
 
 class WatchListAV( APIView ):
